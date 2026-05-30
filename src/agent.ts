@@ -556,6 +556,8 @@ async function streamResponse(
   // 仅 attempt 0 时为 false。一旦任何字节通过 bridge 推到 UI，就不能再重试，
   // 否则用户会看到同一段文本被重复 append。
   while (true) {
+  // 调试日志：记录请求开始
+  console.log(`[DEBUG] ${caller} requesting model=${model}, baseURL=${(client as any).baseURL || "default"}, previousResponseId=${previousResponseId || "none"}`);
   const stream = client.responses.stream({
     model,
     instructions: normalizedInstructions,
@@ -782,6 +784,11 @@ async function streamResponse(
       attempt += 1;
       continue;
     }
+    // 调试：401 错误特别输出到终端
+    const errObj = error as any;
+    if (errObj?.status === 401 || errObj?.status === 403) {
+      console.error(`[ERROR] ${caller} 认证失败: status=${errObj?.status}, message=${errObj?.message}, baseURL=${(client as any).baseURL || "default"}`);
+    }
     logApiError(caller, error, {
       api: "responses",
       model,
@@ -831,6 +838,8 @@ async function streamChatCompletion(
 
     let stream: any;
     try {
+      // 调试日志：记录请求开始
+      console.log(`[DEBUG] ${caller} chat.completions requesting model=${model}, baseURL=${(client as any).baseURL || "default"}`);
       stream = await client.chat.completions.create(
         createParams as any,
         control?.signal ? { signal: control.signal } : undefined,
@@ -846,6 +855,11 @@ async function streamChatCompletion(
         await sleep(STREAM_RETRY_DELAYS_MS[attempt] ?? STREAM_RETRY_DELAYS_MS[STREAM_RETRY_DELAYS_MS.length - 1]);
         attempt += 1;
         continue;
+      }
+      // 调试：401 错误特别输出到终端
+      const errObj = error as any;
+      if (errObj?.status === 401 || errObj?.status === 403) {
+        console.error(`[ERROR] ${caller} 认证失败: status=${errObj?.status}, message=${errObj?.message}, baseURL=${(client as any).baseURL || "default"}`);
       }
       logApiError(caller, error, {
         api: "chat-completions",

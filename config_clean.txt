@@ -136,9 +136,8 @@ export function getCredentialsPath(): string {
  */
 const DEFAULT_MINIMAX_PROVIDER: ModelProfile = {
   models: ["MiniMax-M2.7-highspeed", "MiniMax-M2.7", "MiniMax-M2.5-highspeed", "MiniMax-M2.5"],
-  apiKey: process.env.MINIMAX_API_KEY,
+  apiKey: process.env.MINIMAX_API_KEY ?? "",
   baseURL: process.env.MINIMAX_BASEURL,
-  apiMode: "chat-completions"
 };
 
 /**
@@ -381,8 +380,8 @@ export function resolveConfig(providerName?: string, modelName?: string): Resolv
   const apiMode = resolveApiMode(baseURL, provider?.apiMode ?? process.env.MINIMAX_API_MODE);
   const showThinking = settings.showThinking ?? false;
 
-    // 调试
-  console.log(`[DEBUG] resolveConfig: provider=${targetProvider}, baseURL=${baseURL}, apiMode=${apiMode}, apiKey=${apiKey ? apiKey.slice(0, 10) + '...' : '(empty)'}`);
+  // 调试
+  console.log(`[DEBUG] resolveConfig: provider=${targetProvider}, baseURL=${baseURL}, apiMode=${apiMode}`);
 
   return {
     model,

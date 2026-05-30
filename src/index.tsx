@@ -66,6 +66,9 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "..");
 loadDotenv({ path: path.join(PROJECT_ROOT, ".env"), override: true });
 
+// 调试：确认环境变量是否加载
+console.log(`[DEBUG] MINIMAX_BASEURL=${process.env.MINIMAX_BASEURL}, MINIMAX_API_MODE=${process.env.MINIMAX_API_MODE}`);
+
 const WORKDIR = process.cwd();
 
 function createAgentConfig(resolved: ResolvedConfig, authState?: ProviderAuthState): AgentConfig {
