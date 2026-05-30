@@ -1,14 +1,14 @@
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
-# xbcode
+# weber
 
-`xbcode` is a TypeScript-based CLI coding agent built with OpenAI SDK and Ink. It runs in the terminal, streams model output, executes tools inside the current workspace, supports persistent tasks, skills, MCP integration, and lightweight multi-agent teamwork.
+`weber` is a TypeScript-based CLI coding agent built with OpenAI SDK and Ink. It runs in the terminal, streams model output, executes tools inside the current workspace, supports persistent tasks, skills, MCP integration, and lightweight multi-agent teamwork.
 
 The project is positioned as a compact, hackable alternative to heavier coding agents: small enough to read end-to-end, but already opinionated enough to be useful in day-to-day coding workflows.
 
 ## Project Status
 
-`xbcode` is an early open source product focused on being practical, readable, and easy to extend. The current priority is reliability, usability, and contributor experience.
+`weber` is an early open source product focused on being practical, readable, and easy to extend. The current priority is reliability, usability, and contributor experience.
 
 Related project docs:
 
@@ -35,7 +35,7 @@ Related project docs:
 ### Install
 
 ```bash
-npm install -g @lwmxiaobei/xbcode
+npm install -g @lwmxiaobei/weber
 ```
 
 Or run locally in this repo:
@@ -47,10 +47,10 @@ npm run dev
 
 ### First-run configuration
 
-On install, `xbcode` creates a default config file at:
+On install, `weber` creates a default config file at:
 
 ```bash
-~/.xbcode/settings.json
+~/.weber/settings.json
 ```
 
 Minimal example:
@@ -76,7 +76,7 @@ Minimal example:
 ### Start the CLI
 
 ```bash
-xbcode
+weber
 ```
 
 Local development:
@@ -100,11 +100,11 @@ After launch, enter a request such as:
 Read the project structure and explain how the agent loop works.
 ```
 
-If `MODEL_ID` is not preset in the environment, the CLI will guide you through interactive provider/model selection from `~/.xbcode/settings.json`.
+If `MODEL_ID` is not preset in the environment, the CLI will guide you through interactive provider/model selection from `~/.weber/settings.json`.
 
 ## How It Works
 
-At a high level, `xbcode` runs a standard think-act loop:
+At a high level, `weber` runs a standard think-act loop:
 
 1. Build a system prompt from built-in rules, loaded skill descriptions, MCP instructions, and optional project `AGENTS.md`.
 2. Send the current turn to the selected model.
@@ -136,7 +136,7 @@ npm start
 Published binary:
 
 ```bash
-xbcode
+weber
 ```
 
 ### Slash commands
@@ -161,7 +161,7 @@ Skill prompt-commands are also exposed as slash commands when available from loa
 
 ### Provider and model configuration
 
-Providers are configured in `~/.xbcode/settings.json`:
+Providers are configured in `~/.weber/settings.json`:
 
 ```json
 {
@@ -203,10 +203,10 @@ API mode can be explicit, or derived automatically. For example, DeepSeek-compat
 
 When OpenAI OAuth is enabled:
 
-- Static provider settings remain in `~/.xbcode/settings.json`
-- Dynamic OAuth credentials are stored separately in `~/.xbcode/credentials.json`
+- Static provider settings remain in `~/.weber/settings.json`
+- Dynamic OAuth credentials are stored separately in `~/.weber/credentials.json`
 - Runtime auth prefers a valid OAuth `access_token`
-- If refresh fails, `xbcode` falls back to the provider `apiKey` when one is configured
+- If refresh fails, `weber` falls back to the provider `apiKey` when one is configured
 
 OAuth commands:
 
@@ -219,7 +219,7 @@ OAuth commands:
 
 ### Workspace behavior
 
-`xbcode` operates relative to the current working directory:
+`weber` operates relative to the current working directory:
 
 - File tools are sandboxed to `process.cwd()`
 - Shell commands run with `cwd = process.cwd()`
@@ -288,13 +288,13 @@ When a task is marked `completed`, dependent tasks are automatically unblocked.
 
 Skills provide reusable instructions and domain-specific guidance. They are loaded from three locations:
 
-- Global (preferred): `~/.xbcode/skills`
+- Global (preferred): `~/.weber/skills`
 - Global (Claude-compatible): `~/.claude/skills`
 - Local: `<workdir>/skills`
 
 Loading order matters:
 
-- `~/.xbcode/skills` is loaded first
+- `~/.weber/skills` is loaded first
 - `~/.claude/skills` is loaded next for compatibility
 - Local skills are loaded last and override global skills with the same `name`
 
@@ -314,7 +314,7 @@ Two example local skills ship in this repo:
 MCP server configuration lives in:
 
 ```bash
-~/.xbcode/settings.json
+~/.weber/settings.json
 ```
 
 Supported transports:
@@ -358,7 +358,7 @@ For deeper details, see:
 
 ### Team mode
 
-`xbcode` supports persistent teammates instead of only one-shot sub-agents.
+`weber` supports persistent teammates instead of only one-shot sub-agents.
 
 Conceptually:
 
@@ -451,7 +451,7 @@ Responsible for:
 
 Responsible for:
 
-- reading `~/.xbcode/settings.json`
+- reading `~/.weber/settings.json`
 - normalizing provider settings
 - selecting models
 - validating and normalizing MCP server configs
@@ -537,12 +537,12 @@ The test runner uses native `node:test` with `tsx`.
 The package is published as:
 
 ```text
-@lwmxiaobei/xbcode
+@lwmxiaobei/weber
 ```
 
 Important package details:
 
-- binary name: `xbcode`
+- binary name: `weber`
 - module format: ESM
 - build output: `dist/`
 - `prepublishOnly` runs build plus tests

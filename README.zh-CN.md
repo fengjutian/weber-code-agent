@@ -1,8 +1,8 @@
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
-# xbcode
+# weber
 
-`xbcode` 是一个基于 TypeScript、OpenAI SDK 和 Ink 构建的终端代码代理。它运行在命令行中，支持流式输出、工具调用、工作区内读写与执行、持久化任务、技能加载、MCP 集成，以及轻量级多 Agent 协作。
+`weber` 是一个基于 TypeScript、OpenAI SDK 和 Ink 构建的终端代码代理。它运行在命令行中，支持流式输出、工具调用、工作区内读写与执行、持久化任务、技能加载、MCP 集成，以及轻量级多 Agent 协作。
 
 这个项目的目标不是做一个“什么都包”的庞大框架，而是提供一个足够实用、同时又足够小巧、便于阅读和改造的 CLI Agent 实现。
 
@@ -23,7 +23,7 @@
 ### 安装
 
 ```bash
-npm install -g @lwmxiaobei/xbcode
+npm install -g @lwmxiaobei/weber
 ```
 
 或者在当前仓库本地运行：
@@ -38,7 +38,7 @@ npm run dev
 安装后会自动生成默认配置文件：
 
 ```bash
-~/.xbcode/settings.json
+~/.weber/settings.json
 ```
 
 最小示例：
@@ -83,7 +83,7 @@ npm run dev
 ### 启动
 
 ```bash
-xbcode
+weber
 ```
 
 本地开发：
@@ -107,7 +107,7 @@ npm start
 读取当前项目结构，并解释 agent loop 是怎么工作的。
 ```
 
-如果环境变量里没有预先指定 `MODEL_ID`，并且 `~/.xbcode/settings.json` 里也没有可用的 `defaultModel`，CLI 会引导你选择 provider 和 model。
+如果环境变量里没有预先指定 `MODEL_ID`，并且 `~/.weber/settings.json` 里也没有可用的 `defaultModel`，CLI 会引导你选择 provider 和 model。
 
 ## 使用说明
 
@@ -125,7 +125,7 @@ npm start
 全局安装后的启动命令：
 
 ```bash
-xbcode
+weber
 ```
 
 ### Slash Commands
@@ -153,7 +153,7 @@ xbcode
 配置文件位置：
 
 ```bash
-~/.xbcode/settings.json
+~/.weber/settings.json
 ```
 
 支持配置多个 provider，每个 provider 可以包含：
@@ -195,8 +195,8 @@ OpenAI OAuth 配置示例：
 
 如果启用了 OpenAI OAuth：
 
-- 静态 provider 配置仍然放在 `~/.xbcode/settings.json`
-- 动态 OAuth 凭据会单独写入 `~/.xbcode/credentials.json`
+- 静态 provider 配置仍然放在 `~/.weber/settings.json`
+- 动态 OAuth 凭据会单独写入 `~/.weber/credentials.json`
 - 运行时优先使用有效的 OAuth `access_token`
 - 如果刷新失败，并且配置里还有 `apiKey`，则自动回退到 `apiKey`
 
@@ -211,7 +211,7 @@ OAuth 命令：
 
 ### 工作区行为
 
-`xbcode` 总是围绕当前工作目录运行：
+`weber` 总是围绕当前工作目录运行：
 
 - 文件工具只能访问 `process.cwd()` 下的路径
 - shell 命令在当前工作目录执行
@@ -280,13 +280,13 @@ teammate 只能访问受限工具集：
 
 技能加载顺序如下：
 
-- 全局技能目录（优先）：`~/.xbcode/skills`
+- 全局技能目录（优先）：`~/.weber/skills`
 - 全局技能目录（兼容 Claude）：`~/.claude/skills`
 - 仓库本地技能目录：`<workdir>/skills`
 
 规则是：
 
-- `~/.xbcode/skills` 先加载
+- `~/.weber/skills` 先加载
 - `~/.claude/skills` 随后加载以保持兼容
 - 本地技能最后加载，并可以覆盖同名全局技能
 
@@ -301,7 +301,7 @@ teammate 只能访问受限工具集：
 MCP 配置写在：
 
 ```bash
-~/.xbcode/settings.json
+~/.weber/settings.json
 ```
 
 当前支持两种 transport：
@@ -325,7 +325,7 @@ MCP 配置写在：
 
 ### Team 模式
 
-除了单次 `task` 子代理之外，`xbcode` 还支持常驻 teammate：
+除了单次 `task` 子代理之外，`weber` 还支持常驻 teammate：
 
 - `lead` 是和用户直接交互的主代理
 - teammate 是具名、可持续存在的后台协作代理
@@ -414,7 +414,7 @@ code-agent/
 
 负责：
 
-- 读取 `~/.xbcode/settings.json`
+- 读取 `~/.weber/settings.json`
 - 规范化 provider 配置
 - 模型选择
 - MCP server 配置解析和校验

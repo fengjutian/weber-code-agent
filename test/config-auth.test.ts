@@ -43,7 +43,7 @@ test("resolveProviderAuthState prefers valid oauth credentials over apiKey", () 
 });
 
 test("writeCredentialsFile persists oauth credentials for a provider", async () => {
-  const tempDir = await mkdtemp(join(tmpdir(), "xbcode-auth-"));
+  const tempDir = await mkdtemp(join(tmpdir(), "weber-auth-"));
   const credentialsPath = join(tempDir, "credentials.json");
 
   await writeCredentialsFile(credentialsPath, {
@@ -97,7 +97,7 @@ test("resolveRuntimeAuth refreshes expired oauth token before falling back to ap
 });
 
 test("clearProviderCredentials removes only the targeted provider entry", async () => {
-  const tempDir = await mkdtemp(join(tmpdir(), "xbcode-auth-"));
+  const tempDir = await mkdtemp(join(tmpdir(), "weber-auth-"));
   const credentialsPath = join(tempDir, "credentials.json");
 
   await writeCredentialsFile(credentialsPath, {
@@ -114,7 +114,7 @@ test("clearProviderCredentials removes only the targeted provider entry", async 
 });
 
 test("updateProviderModels persists discovered model ids for one provider", async () => {
-  const tempDir = await mkdtemp(join(tmpdir(), "xbcode-settings-"));
+  const tempDir = await mkdtemp(join(tmpdir(), "weber-settings-"));
   const settingsPath = join(tempDir, "settings.json");
 
   await writeSettingsFile(settingsPath, normalizeSettings({

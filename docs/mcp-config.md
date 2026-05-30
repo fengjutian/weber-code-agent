@@ -12,7 +12,7 @@
 
 当前项目从下面这个文件读取 MCP 配置：
 
-- `~/.xbcode/settings.json`
+- `~/.weber/settings.json`
 
 MCP 配置挂在根对象的 `mcp.servers` 下。
 
@@ -443,7 +443,7 @@ MCP servers: configured 1 | enabled 1 | connected 1 | degraded 0 | disconnected 
 
 如果状态是 `connected`，说明至少这几件事已经成立：
 
-- `~/.xbcode/settings.json` 被正确读取了
+- `~/.weber/settings.json` 被正确读取了
 - `mcp.servers` 被正确解析了
 - `npx -y @modelcontextprotocol/server-filesystem .` 能正常启动
 - 当前 agent 运行时已经成功拿到了该 server 的工具缓存
@@ -452,7 +452,7 @@ MCP servers: configured 1 | enabled 1 | connected 1 | degraded 0 | disconnected 
 
 如果 MCP 看起来没生效，建议按这个顺序排查：
 
-1. 检查 `~/.xbcode/settings.json` 是否是合法 JSON
+1. 检查 `~/.weber/settings.json` 是否是合法 JSON
 2. 检查 `mcp.servers` 是否存在
 3. 检查 `name` 是否重复
 4. 检查 `transport` 是否写对

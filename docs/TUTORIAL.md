@@ -1,4 +1,4 @@
-# 从零构建 Code Agent：与当前 `xbcode` 实现对齐的教程
+# 从零构建 Code Agent：与当前 `weber` 实现对齐的教程
 
 > 这份教程基于当前仓库代码更新，不再引用已经删除的 demo 文件。本文统一以 `src/index.tsx`、`src/agent.ts`、`src/tools.ts`、`src/task-manager.ts`、`src/message-bus.ts`、`src/teammate-manager.ts`、`src/mcp-*.ts` 为准。
 
@@ -471,13 +471,13 @@ export const TASK_TOOL = {
 技能来源有三层：
 
 1. 全局技能目录（优先）
-   `~/.xbcode/skills`
+   `~/.weber/skills`
 2. 全局技能目录（兼容 Claude）
    `~/.claude/skills`
 3. 当前仓库本地技能目录
    `./skills`
 
-加载顺序是：`~/.xbcode/skills` -> `~/.claude/skills` -> `./skills`。
+加载顺序是：`~/.weber/skills` -> `~/.claude/skills` -> `./skills`。
 后加载的本地技能会覆盖同名全局技能。
 
 ### `SkillLoader` 的职责
@@ -899,7 +899,7 @@ export type MailboxMessageType =
 
 ### 配置入口
 
-MCP 配置现在走 `~/.xbcode/settings.json`：
+MCP 配置现在走 `~/.weber/settings.json`：
 
 ```json
 {

@@ -20,12 +20,12 @@ export const LEAD_NAME = "lead" as const;
 export const TEAM_DIR = path.join(WORKDIR, ".team");
 
 // 技能分为全局技能和仓库本地技能，本地技能可以覆盖同名全局技能。
-// 全局目录优先使用 ~/.xbcode/skills，同时兼容 Claude 的 ~/.claude/skills。
-const GLOBAL_SKILLS_DIR = path.join(os.homedir(), ".xbcode", "skills");
+// 全局目录优先使用 ~/.weber/skills，同时兼容 Claude 的 ~/.claude/skills。
+const GLOBAL_SKILLS_DIR = path.join(os.homedir(), ".weber", "skills");
 const CLAUDE_SKILLS_DIR = path.join(os.homedir(), ".claude", "skills");
 const LOCAL_SKILLS_DIR = path.join(WORKDIR, "skills");
 
-// Load order: xbcode global -> claude-compatible global -> local override
+// Load order: weber global -> claude-compatible global -> local override
 export const skillLoader = new SkillLoader([GLOBAL_SKILLS_DIR, CLAUDE_SKILLS_DIR, LOCAL_SKILLS_DIR]);
 
 // 这些单例对象组成了 CLI agent 的工具运行时。

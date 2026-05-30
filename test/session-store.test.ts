@@ -27,8 +27,8 @@ function buildMessages(text: string): PersistedUiMessage[] {
 }
 
 test("session store saves and restores the latest checkpoint for a workspace", () => {
-  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "xbcode-session-"));
-  process.env.XBCODE_SESSION_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "xbcode-session-root-"));
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "weber-session-"));
+  process.env.weber_SESSION_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "weber-session-root-"));
   const sessionId = createSessionId(new Date("2026-04-22T10:00:00.000Z"));
 
   appendSessionCheckpoint(workspace, {
@@ -60,8 +60,8 @@ test("session store saves and restores the latest checkpoint for a workspace", (
 });
 
 test("session store lists recent sessions newest first with the first user message as title", () => {
-  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "xbcode-session-list-"));
-  process.env.XBCODE_SESSION_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "xbcode-session-root-"));
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "weber-session-list-"));
+  process.env.weber_SESSION_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "weber-session-root-"));
   const olderSessionId = createSessionId(new Date("2026-04-22T09:00:00.000Z"));
   const newerSessionId = createSessionId(new Date("2026-04-22T11:00:00.000Z"));
 

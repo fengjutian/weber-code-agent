@@ -10,7 +10,7 @@ If you are reporting a vulnerability, please verify it against the current relea
 
 Please do not open a public GitHub issue for suspected security vulnerabilities.
 
-Instead, report the issue privately to `security@xbcode.dev` and include:
+Instead, report the issue privately to `security@weber.dev` and include:
 
 - A clear description of the vulnerability
 - The affected version or commit when known
@@ -25,7 +25,7 @@ You can expect:
 
 ## Security Scope
 
-`xbcode` is a local CLI agent that can read and write files inside the current workspace, execute shell commands, load skills, connect to MCP servers, and authenticate against model providers.
+`weber` is a local CLI agent that can read and write files inside the current workspace, execute shell commands, load skills, connect to MCP servers, and authenticate against model providers.
 
 Because of that, reports are especially useful when they involve:
 
@@ -37,7 +37,7 @@ Because of that, reports are especially useful when they involve:
 
 ## Operational Guidance
 
-Users should treat `xbcode` as a privileged local development tool and review:
+Users should treat `weber` as a privileged local development tool and review:
 
 - Which directory it is running in
 - Which providers and MCP servers are configured

@@ -1,17 +1,17 @@
 {
-  "name": "@lwmxiaobei/xbcode",
+  "name": "weber-code-agent",
   "version": "1.0.0",
   "private": false,
-  "description": "xbcode CLI agent",
+  "description": "weber CLI agent",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lwmxiaobei/agent-mini.git"
+    "url": "git+https://github.com/fengjutian/weber-code-agent.git"
   },
-  "homepage": "https://github.com/lwmxiaobei/agent-mini#readme",
+  "homepage": "https://github.com/fengjutian/weber-code-agent#readme",
   "bugs": {
-    "url": "https://github.com/lwmxiaobei/agent-mini/issues"
+    "url": "https://github.com/fengjutian/weber-code-agent/issues"
   },
   "engines": {
     "node": ">=20"
@@ -23,7 +23,7 @@
     "mcp"
   ],
   "bin": {
-    "xbcode": "./dist/index.js"
+    "weber": "./dist/index.js"
   },
   "publishConfig": {
     "access": "public"

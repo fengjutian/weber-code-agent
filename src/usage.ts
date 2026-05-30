@@ -293,7 +293,7 @@ export function formatUsageReport(usage: UsageResponse): string {
 }
 
 /**
- * 暴露给 oauth.ts 调用方的标识，便于未来调试时确认 codex 与 xbcode 共用同一组 UA。
+ * 暴露给 oauth.ts 调用方的标识，便于未来调试时确认 codex 与 weber 共用同一组 UA。
  *
  * 为什么 re-export：
  * - usage.ts 的调用方可能想在错误信息里附上当前 UA / Version；

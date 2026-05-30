@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `xbcode` will be documented in this file.
+All notable changes to `weber` will be documented in this file.
 
 The format is based on Keep a Changelog, and the project aims to follow Semantic Versioning for published releases.
 
@@ -20,7 +20,7 @@ The format is based on Keep a Changelog, and the project aims to follow Semantic
 
 ### Added
 
-- Initial public release of `xbcode`
+- Initial public release of `weber`
 - Terminal-first TypeScript CLI coding agent built with OpenAI SDK and Ink
 - Streaming model output and workspace-scoped file and shell tools
 - Dual backend support for Responses API and Chat Completions API

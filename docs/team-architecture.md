@@ -10,7 +10,7 @@ P1 实施细节见 `docs/superpowers/specs/2026-04-30-team-mailbox-overhaul-desi
 
 ```mermaid
 graph TB
-    subgraph CLI["xbcode CLI 进程"]
+    subgraph CLI["weber CLI 进程"]
         UI["index.tsx<br/>Ink/React UI"]
         LEAD["Lead Agent<br/>(用户对话主体)"]
         SUBA["Sub-agent<br/>(一次性 task tool)"]

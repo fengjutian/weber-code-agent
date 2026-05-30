@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 import type { ImageAttachment } from "./types.js";
 
 const execFileAsync = promisify(execFile);
-const TMP_DIR = path.join(os.tmpdir(), "xbcode-images");
+const TMP_DIR = path.join(os.tmpdir(), "weber-images");
 
 function ensureTmpDir(): void {
   fs.mkdirSync(TMP_DIR, { recursive: true });

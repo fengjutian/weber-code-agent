@@ -101,7 +101,7 @@ export type StartupCommand =
  * Parse process argv into the minimal startup commands supported by the CLI.
  *
  * Why this exists:
- * - Slash commands run after the TUI mounts, but `xbcode resume <id>` needs to
+ * - Slash commands run after the TUI mounts, but `weber resume <id>` needs to
  *   restore state before the first render so the user lands directly in that
  *   session.
  * - Keeping argv parsing separate from the Ink entrypoint makes the behavior

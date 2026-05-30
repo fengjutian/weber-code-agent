@@ -32,7 +32,7 @@ This change must not:
 - Scopes: `openid profile email offline_access`
 - Returned credentials: `access_token`, `refresh_token`, `id_token`, `expires_in`
 
-`code-agent` currently only supports static provider credentials from `~/.xbcode/settings.json`, primarily `apiKey`, `baseURL`, and `apiMode`.
+`code-agent` currently only supports static provider credentials from `~/.weber/settings.json`, primarily `apiKey`, `baseURL`, and `apiMode`.
 
 The smallest safe implementation is to add an OpenAI-specific OAuth credential layer on top of the existing provider configuration, rather than redesigning all provider authentication.
 
@@ -42,8 +42,8 @@ Implement an OpenAI-only OAuth subsystem with separate credential persistence.
 
 At runtime:
 
-1. Read static provider config from `~/.xbcode/settings.json`.
-2. Read dynamic OAuth credentials from `~/.xbcode/credentials.json`.
+1. Read static provider config from `~/.weber/settings.json`.
+2. Read dynamic OAuth credentials from `~/.weber/credentials.json`.
 3. For the active OpenAI provider:
    - If OAuth is enabled and a valid `access_token` exists, use it.
    - If the token is expired and a `refresh_token` exists, refresh it and persist the new credentials.
@@ -100,7 +100,7 @@ Cons:
 
 The existing settings file remains valid.
 
-`~/.xbcode/settings.json` gains an optional auth section for a provider:
+`~/.weber/settings.json` gains an optional auth section for a provider:
 
 ```json
 {
@@ -129,7 +129,7 @@ Rules:
 
 OAuth credentials live in a separate file:
 
-- Path: `~/.xbcode/credentials.json`
+- Path: `~/.weber/credentials.json`
 
 Reason:
 

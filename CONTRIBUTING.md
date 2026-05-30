@@ -1,6 +1,6 @@
-# Contributing to xbcode
+# Contributing to weber
 
-Thanks for contributing to `xbcode`.
+Thanks for contributing to `weber`.
 
 ## Before You Start
 

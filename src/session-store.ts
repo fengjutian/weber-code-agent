@@ -40,18 +40,18 @@ export type SessionListItem = {
   providerName?: string;
 };
 
-const XB_CONFIG_DIR = path.join(os.homedir(), ".xbcode");
+const XB_CONFIG_DIR = path.join(os.homedir(), ".weber");
 
 /**
  * 返回 session transcript 的根目录。
  *
  * 为什么支持环境变量覆写：
- * - 生产环境默认仍然应该落在 `~/.xbcode/sessions`，方便和 settings 放在一起。
+ * - 生产环境默认仍然应该落在 `~/.weber/sessions`，方便和 settings 放在一起。
  * - 测试和受限沙箱里，home 目录不一定可写，硬编码会让本地持久化能力无法验证。
  * - 用一个集中 helper 做覆写点，可以避免把“测试专用路径”散落到业务逻辑里。
  */
 function getSessionRootDir(): string {
-  const override = process.env.XBCODE_SESSION_DIR?.trim();
+  const override = process.env.weber_SESSION_DIR?.trim();
   if (override) {
     return override;
   }

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const LOG_DIR = path.join(os.homedir(), ".xbcode");
+const LOG_DIR = path.join(os.homedir(), ".weber");
 const LOG_PATH = path.join(LOG_DIR, "error.log");
 
 export type ApiCaller = string;
@@ -49,7 +49,7 @@ function describeError(error: unknown): Record<string, unknown> {
 }
 
 /**
- * Append a structured JSON record to ~/.xbcode/error.log.
+ * Append a structured JSON record to ~/.weber/error.log.
  *
  * Why a file (not stderr): when the user sees a 400 in the TUI we want a
  * forensic trail to grep through after the fact, including which agent (main /

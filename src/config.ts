@@ -5,12 +5,26 @@ import os from "node:os";
 import type { McpServerConfig } from "./mcp/types.js";
 import { isPlainRecord } from "./utils.js";
 
+/**
+ * 单个模型条目
+ * @property id - 模型ID（如 gpt-4、claude-3 等）
+ * @property name - 模型显示名称（可选）
+ * @property description - 模型描述（可选）
+ */
 export type ModelEntry = {
   id: string;
   name?: string;
   description?: string;
 };
 
+/**
+ * 提供商配置
+ * @property models - 该提供商支持的模型列表
+ * @property apiKey - API密钥（可选，支持OAuth时可不填）
+ * @property baseURL - API基础地址
+ * @property apiMode - API模式：responses（新模式）或 chat-completions（传统模式）
+ * @property auth - 认证配置，支持 OAuth
+ */
 export type ModelProfile = {
   models: (string | ModelEntry)[];
   apiKey?: string;
@@ -19,10 +33,19 @@ export type ModelProfile = {
   auth?: ProviderAuthConfig;
 };
 
+/** OAuth 认证配置 */
 export type ProviderAuthConfig = {
   type: "oauth";
 };
 
+/**
+ * 完整设置结构
+ * @property providers - 所有提供商的配置
+ * @property defaultProvider - 默认使用的提供商名称
+ * @property defaultModel - 默认模型ID
+ * @property showThinking - 是否显示模型的思考过程
+ * @property mcp - MCP服务器配置
+ */
 export type Settings = {
   providers: Record<string, ModelProfile>;
   defaultProvider?: string;
@@ -33,14 +56,18 @@ export type Settings = {
   };
 };
 
+/**
+ * 解析后的运行时配置
+ * 这是从 settings.json 和环境变量综合计算得出的最终配置
+ */
 export type ResolvedConfig = {
-  model: string;
-  apiKey: string;
-  baseURL: string;
-  apiMode: "responses" | "chat-completions";
-  showThinking: boolean;
-  providerName: string;
-  availableModels: string[];
+  model: string;                              // 选中的模型ID
+  apiKey: string;                             // API密钥
+  baseURL: string;                            // API基础地址
+  apiMode: "responses" | "chat-completions"; // API模式
+  showThinking: boolean;                      // 是否显示思考过程
+  providerName: string;                       // 当前提供商名称
+  availableModels: string[];                  // 该提供商的所有可用模型
 };
 
 export type StoredOAuthCredentials = {
@@ -80,7 +107,14 @@ export type ResolveRuntimeAuthArgs = {
   now?: Date;
 };
 
-const CONFIG_DIR = path.join(os.homedir(), ".xbcode");
+/**
+ * 配置文件目录：~/.weber/
+ *
+ * 该目录包含：
+ * - settings.json: 提供商配置（模型、API地址、API模式等）
+ * - credentials.json: 凭证配置（OAuth token、API Key等敏感信息）
+ */
+const CONFIG_DIR = path.join(os.homedir(), ".weber");
 const SETTINGS_PATH = path.join(CONFIG_DIR, "settings.json");
 const CREDENTIALS_PATH = path.join(CONFIG_DIR, "credentials.json");
 
@@ -95,10 +129,39 @@ export function getCredentialsPath(): string {
   return CREDENTIALS_PATH;
 }
 
+/**
+ * MiniMax 默认配置
+ * API Key 从环境变量 MINIMAX_API_KEY 读取
+ * 也可在 settings.json 中覆盖配置
+ */
+const DEFAULT_MINIMAX_PROVIDER: ModelProfile = {
+  models: ["MiniMax-M2.7-highspeed", "MiniMax-M2.7", "MiniMax-M2.5-highspeed", "MiniMax-M2.5"],
+  apiKey: process.env.MINIMAX_API_KEY ?? "",
+  baseURL: process.env.MINIMAX_BASEURL,
+};
+
+/**
+ * DeepSeek 默认配置
+ * API Key 从环境变量 DEEPSEEK_API_KEY 读取
+ * DeepSeek 使用 chat-completions 模式
+ */
+const DEFAULT_DEEPSEEK_PROVIDER: ModelProfile = {
+  models: ["deepseek-v4-pro", "deepseek-v4-flash"],
+  apiKey: process.env.DEEPSEEK_API_KEY ?? "",
+  baseURL: "https://api.deepseek.com/v1",
+};
+
 export function loadSettings(): Settings {
   if (cachedSettings) return cachedSettings;
 
-  const defaultSettings: Settings = { providers: {}, mcp: { servers: [] } };
+  // 默认配置：包含 MiniMax 和 DeepSeek providers
+  const defaultSettings: Settings = {
+    providers: {
+      minimax: DEFAULT_MINIMAX_PROVIDER,
+      deepseek: DEFAULT_DEEPSEEK_PROVIDER,
+    },
+    mcp: { servers: [] },
+  };
 
   try {
     if (!fs.existsSync(SETTINGS_PATH)) {
@@ -250,41 +313,69 @@ export async function clearProviderCredentials(filePath: string, providerName: s
   await writeCredentialsFile(filePath, { providers: nextProviders });
 }
 
+/**
+ * 根据 baseURL 和显式配置自动判断 API 模式
+ *
+ * 支持的 API 模式：
+ * - responses: OpenAI 新推出的 Responses API
+ *
+ * @param baseURL - API 基础地址
+ * @param explicit - 显式指定的模式（优先级最高）
+ * @returns API 模式类型
+ */
 function resolveApiMode(baseURL: string, explicit?: string): "responses" | "chat-completions" {
   const mode = (explicit ?? "").trim().toLowerCase();
+
+  // 1. 如果显式指定了模式，直接使用
   if (["chat", "chat-completions", "chat_completions"].includes(mode)) {
     return "chat-completions";
   }
   if (mode === "responses") {
     return "responses";
   }
+
+  // 2. 根据 baseURL 自动检测模式
+  // DeepSeek 使用 chat-completions 模式
   if (baseURL.toLowerCase().includes("deepseek.com")) {
     return "chat-completions";
   }
+
+  // MiniMax 使用 chat-completions 模式
+  // MiniMax API: https://platform.minimax.chat/
+  if (baseURL.toLowerCase().includes("minimax.chat")) {
+    return "chat-completions";
+  }
+
+  // 3. 默认为 responses 模式（OpenAI 标准）
   return "responses";
 }
 
+/**
+ * 解析配置，确定运行时使用的提供商和模型
+ *
+ * 提供商优先级：explicit arg > defaultProvider > 第一个可用的提供商
+ * 模型优先级：explicit arg > MODEL_ID 环境变量 > defaultModel 配置
+ */
 export function resolveConfig(providerName?: string, modelName?: string): ResolvedConfig {
   const settings = loadSettings();
 
-  // Determine which provider to use: explicit arg > defaultProvider > first available key
+  // 确定使用哪个提供商：explicit参数 > defaultProvider > 第一个可用key
   const providerKeys = Object.keys(settings.providers);
   const targetProvider = providerName || settings.defaultProvider || providerKeys[0] || "";
   const provider = settings.providers[targetProvider];
 
+  // 获取该提供商的所有可用模型
   const availableModels = (provider?.models ?? []).map((m) => normalizeModelEntry(m).id);
+
   /**
-   * Resolve the active model from the strongest available source so startup can
-   * skip the interactive picker when the user has already chosen a stable
-   * default model.
-   *
-   * Why this order matters:
-   * - Explicit runtime switches must win for the current session.
-   * - `MODEL_ID` remains the strongest shell-level override.
-   * - `defaultModel` gives `settings.json` a persistent default model.
+   * 模型解析优先级（从高到低）：
+   * 1. modelName 参数 - 明确的运行时切换
+   * 2. MODEL_ID 环境变量 - Shell级别覆盖
+   * 3. settings.defaultModel - settings.json 中的持久化默认
    */
   const model = modelName ?? process.env.MODEL_ID ?? settings.defaultModel ?? "";
-  const apiKey = provider?.apiKey ?? "";
+  // API Key 优先级：settings.json > 环境变量 MINIMAX_API_KEY
+  const apiKey = provider?.apiKey ?? process.env.MINIMAX_API_KEY ?? "";
   const baseURL = provider?.baseURL ?? "https://api.openai.com/v1";
   const apiMode = resolveApiMode(baseURL, provider?.apiMode);
   const showThinking = settings.showThinking ?? false;
@@ -306,7 +397,7 @@ export function resolveConfig(providerName?: string, modelName?: string): Resolv
  *
  * Why this exists:
  * - The UI needs a deterministic rule, but tests should not have to depend on
- *   the real `~/.xbcode/settings.json` on the current machine.
+ *   the real `~/.weber/settings.json` on the current machine.
  * - Splitting the pure decision from filesystem-backed config loading keeps the
  *   startup path easy to verify without mutating user state.
  * - The shell-level override must remain a first-class bypass so ad-hoc runs
@@ -657,13 +748,27 @@ function normalizeMcpServer(
   };
 }
 
+/**
+ * 规范化设置数据
+ *
+ * 此函数负责：
+ * 1. 验证 settings.json 的数据结构
+ * 2. 规范化每个提供商的配置
+ * 3. 规范化 MCP 服务器配置
+ * 4. 收集并报告任何警告信息
+ *
+ * @param raw - 原始 JSON 数据
+ * @param warnings - 警告信息数组（输出参数）
+ */
 export function normalizeSettings(raw: unknown, warnings: string[]): Settings {
   const root = isPlainRecord(raw) ? raw : {};
 
+  // 验证 providers 结构
   if (root.providers !== undefined && !isPlainRecord(root.providers)) {
     warnings.push("[config] providers must be an object.");
   }
 
+  // 规范化每个提供商的配置
   const providers = isPlainRecord(root.providers)
     ? Object.fromEntries(
         Object.entries(root.providers)
@@ -672,6 +777,7 @@ export function normalizeSettings(raw: unknown, warnings: string[]): Settings {
       )
     : {};
 
+  // 验证 MCP 配置
   const mcpRoot = isPlainRecord(root.mcp) ? root.mcp : undefined;
   if (root.mcp !== undefined && !mcpRoot) {
     warnings.push("[mcp] mcp must be an object.");
@@ -682,6 +788,7 @@ export function normalizeSettings(raw: unknown, warnings: string[]): Settings {
     warnings.push("[mcp] mcp.servers must be an array.");
   }
 
+  // 规范化 MCP 服务器配置
   const seenNames = new Set<string>();
   const servers = Array.isArray(rawServers)
     ? rawServers

@@ -4,7 +4,7 @@
 
 **Goal:** Add optional OpenAI ChatGPT OAuth login to `code-agent` while preserving the existing `apiKey` flow and using OAuth `access_token` directly when available.
 
-**Architecture:** Keep static provider config in `src/config.ts`, add separate credential persistence in `~/.xbcode/credentials.json`, and introduce a narrow `src/oauth/openai.ts` helper for PKCE, callback handling, token exchange, and refresh. Runtime auth resolution stays provider-local: use valid OAuth token first, otherwise fall back to `apiKey`.
+**Architecture:** Keep static provider config in `src/config.ts`, add separate credential persistence in `~/.weber/credentials.json`, and introduce a narrow `src/oauth/openai.ts` helper for PKCE, callback handling, token exchange, and refresh. Runtime auth resolution stays provider-local: use valid OAuth token first, otherwise fall back to `apiKey`.
 
 **Tech Stack:** TypeScript, Node.js built-ins (`http`, `crypto`, `fs`, `path`, `os`), OpenAI SDK, Node test runner with `tsx`
 
@@ -112,7 +112,7 @@ git commit -m "feat: add auth state resolution"
 
 ```ts
 test("writeCredentialsFile persists oauth credentials for a provider", async () => {
-  const tempDir = await mkdtemp(join(tmpdir(), "xbcode-auth-"));
+  const tempDir = await mkdtemp(join(tmpdir(), "weber-auth-"));
   const credentialsPath = join(tempDir, "credentials.json");
 
   await writeCredentialsFile(credentialsPath, {
@@ -364,7 +364,7 @@ git commit -m "feat: wire runtime oauth resolution"
 
 ```ts
 test("clearProviderCredentials removes only the targeted provider entry", async () => {
-  const tempDir = await mkdtemp(join(tmpdir(), "xbcode-auth-"));
+  const tempDir = await mkdtemp(join(tmpdir(), "weber-auth-"));
   const credentialsPath = join(tempDir, "credentials.json");
 
   await writeCredentialsFile(credentialsPath, {

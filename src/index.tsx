@@ -630,7 +630,7 @@ function WelcomePanel({ width, messages }: { width: number; messages: UiMessage[
       paddingY={0}
     >
       <Box justifyContent="space-between">
-        <Text bold color="red">xbcode</Text>
+        <Text bold color="red">weber</Text>
         <Text color="gray">v{pkg.version}</Text>
       </Box>
       <Box marginTop={1}>
@@ -868,7 +868,7 @@ function formatRecentSessions(currentSessionId: string): string {
  * Resolve startup argv into an optional preloaded session snapshot.
  *
  * Why this happens before Ink mounts:
- * - `xbcode resume <id>` should land in the restored session immediately
+ * - `weber resume <id>` should land in the restored session immediately
  *   instead of booting an empty UI and then replaying a command.
  * - Startup restore may also need to switch provider/model first so the in-memory
  *   agent state matches the resumed transcript before the first turn.
@@ -2316,7 +2316,7 @@ function CliApp({ startupResume }: { startupResume: StartupResumeState }) {
         <>
           <Box flexDirection="column" marginBottom={1}>
             <Text color="blue" wrap="truncate">{borderRule(innerWidth)}</Text>
-            <Text color="blue">xbcode <Text color="gray">CLI</Text></Text>
+            <Text color="blue">weber <Text color="gray">CLI</Text></Text>
             <Text color="gray" wrap="truncate">workspace {WORKDIR}</Text>
             <Text color="blue" wrap="truncate">{borderRule(innerWidth)}</Text>
           </Box>

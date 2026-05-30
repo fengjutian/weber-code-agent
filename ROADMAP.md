@@ -1,10 +1,10 @@
 # Roadmap
 
-This roadmap reflects the current direction of `xbcode`. It is intentionally short and may change as the project evolves.
+This roadmap reflects the current direction of `weber`. It is intentionally short and may change as the project evolves.
 
 ## Current Status
 
-`xbcode` is usable today for terminal-first coding workflows, but it should still be treated as an early open source product.
+`weber` is usable today for terminal-first coding workflows, but it should still be treated as an early open source product.
 
 The core loop, tool execution, skills, MCP integration, task persistence, and teammate coordination are already in place. The next phase is to improve reliability, documentation quality, and contributor experience rather than expanding surface area too aggressively.
 
