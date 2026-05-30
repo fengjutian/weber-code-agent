@@ -1,3 +1,28 @@
+/**
+ * @file compact.ts
+ * @description 上下文压缩模块
+ *
+ * 职责：
+ * - 管理对话历史的 token 预算
+ * - 执行两级压缩策略（micro-compact 和 auto-compact）
+ * - 保存历史记录到 transcript 文件
+ * - 为 responses 模式生成续接文本
+ *
+ * 压缩策略：
+ * 1. Micro-Compact（轻量级）：
+ *    - 替换旧工具结果为占位符 [Previous: used tool_name]
+ *    - 保留最近 3 个工具结果原文
+ *
+ * 2. Auto-Compact（深度压缩）：
+ *    - 调用 LLM 生成历史摘要
+ *    - 保留最近若干条消息原文
+ *    - 保存完整历史到 .transcripts/ 目录
+ *
+ * 保留策略：
+ * - 按用户消息边界判断，保留最近 2 条用户消息及其上下文
+ * - 避免在工具调用中间截断
+ */
+
 import OpenAI from "openai";
 import { writeFileSync, mkdirSync } from "fs";
 import { join } from "path";

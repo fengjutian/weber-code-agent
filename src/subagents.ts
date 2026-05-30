@@ -1,3 +1,25 @@
+/**
+ * @file subagents.ts
+ * @description 子 Agent 定义模块
+ *
+ * 职责：
+ * - 定义可用的子 Agent 类型
+ * - 指定每个子 Agent 的系统提示词、可用工具、最大轮次
+ * - 提供子 Agent 描述（用于系统提示词）
+ *
+ * 内置子 Agent：
+ * - general-purpose: 默认工作器，用于实现、编辑和聚焦的子任务
+ *   - 可用工具：bash, 文件操作, 任务管理, MCP, Skill
+ *   - 最大轮次：30
+ * - explore: 只读代码探索，搜索、追踪行为，回答实现问题
+ *   - 可用工具：bash (只读), glob, grep, read_file
+ *   - 最大轮次：20
+ *
+ * 设计原则：
+ * - 子 Agent 有受限工具集，防止无限递归
+ * - 通过统一入口 getSubagentDefinition 加载，方便后续扩展
+ */
+
 export type SubagentDefinition = {
   name: "general-purpose" | "explore";
   whenToUse: string;

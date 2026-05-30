@@ -1,3 +1,27 @@
+/**
+ * @file tools.ts
+ * @description 工具定义和执行器
+ *
+ * 职责：
+ * - 定义所有内置工具的 JSON Schema（用于 API 调用）
+ * - 实现工具处理器（文件操作、Shell、任务管理、团队协作等）
+ * - 提供工具输出的安全处理和截断
+ *
+ * 内置工具（约 18+ 个）：
+ * - bash: 执行 shell 命令（带超时和安全过滤）
+ * - 文件操作: read_file, write_file, edit_file, glob, grep
+ * - 任务管理: task_create, task_update, task_list, task_get, task_complete, task_fail, task_assign, task_block
+ * - 团队协作: teammate_spawn, teammate_list, teammate_shutdown, message_send, lead_inbox
+ * - 技能: load_skill
+ * - MCP: list_mcp_resources, read_mcp_resource, mcp_call
+ *
+ * 安全机制：
+ * - 危险命令黑名单（rm -rf 等）
+ * - Shell 超时限制（默认 120 秒）
+ * - 文件路径沙盒（限制在工作目录内）
+ * - 输出长度限制（50K 字符）
+ */
+
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";

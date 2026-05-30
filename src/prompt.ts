@@ -1,3 +1,27 @@
+/**
+ * @file prompt.ts
+ * @description 系统提示词构建模块
+ *
+ * 职责：
+ * - 构建发送给 LLM 的完整系统提示词
+ * - 读取项目级约定文件（AGENTS.md / CLAUDE.md）
+ * - 注入环境信息（平台、工作目录、Git 状态等）
+ * - 注入 Skill 和 MCP 工具描述
+ *
+ * 提示词结构（按顺序）：
+ * 1. 身份定义（coding agent）
+ * 2. 系统契约（Markdown 输出、tool use）
+ * 3. 任务执行原则（不盲目修改、安全优先）
+ * 4. 动作执行准则（破坏性操作需确认）
+ * 5. 工具使用规范（用专用工具而非 bash）
+ * 6. 语气风格（简洁、无 emoji）
+ * 7. 文本输出规范
+ * 8. 语言响应规则
+ * 9. 环境信息
+ * 10. Skills 和 MCP 说明
+ * 11. 项目约定（AGENTS.md）
+ */
+
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";

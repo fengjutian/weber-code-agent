@@ -1,3 +1,32 @@
+/**
+ * @file oauth/openai.ts
+ * @description OpenAI OAuth 认证模块
+ *
+ * 职责：
+ * - 实现 OpenAI ChatGPT 登录流程
+ * - 处理 PKCE OAuth 2.0 授权码流程
+ * - 管理 access_token 和 refresh_token 生命周期
+ * - 支持 token 自动刷新
+ *
+ * OAuth 流程：
+ * 1. 启动本地回调服务器（随机端口 + 路径 /callback）
+ * 2. 生成 code_verifier + code_challenge（PKCE）
+ * 3. 打开浏览器授权页面
+ * 4. 监听回调，获取授权码
+ * 5. 交换授权码为 access_token
+ * 6. 保存凭证到配置文件
+ *
+ * Token 管理：
+ * - access_token：用于 API 请求（TTL ~30 天）
+ * - refresh_token：用于自动刷新（TTL ~90 天）
+ * - 自动刷新机制：启动时检测过期，必要时重新认证
+ *
+ * 安全特性：
+ * - PKCE 扩展防止授权码拦截
+ * - 本地服务器仅接受 localhost 连接
+ * - 不记录或打印敏感凭证
+ */
+
 import { createHash, randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import { type Dispatcher } from "undici";

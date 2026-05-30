@@ -1,3 +1,27 @@
+/**
+ * @file usage.ts
+ * @description 订阅用量查询模块
+ *
+ * 职责：
+ * - 实现 /usage 命令，查询 ChatGPT 订阅用量
+ * - 调用 ChatGPT backend API 获取 rate limit、credits、spend control 信息
+ * - 格式化用量报告供终端展示
+ *
+ * API 端点：https://chatgpt.com/backend-api/wham/usage
+ * 认证方式：OAuth Bearer Token（复用 oauth 模块的 fetch 和 headers）
+ *
+ * 显示内容：
+ * - 账号信息（email, plan type）
+ * - Rate limit 窗口（primary/secondary 5h 滚动限额、周限额）
+ * - Credits 余额（unlimited / 有额度 / 无额度）
+ * - Spend control 状态（是否超限）
+ *
+ * 注意事项：
+ * - 需要先执行 /login 获取 OAuth 凭证
+ * - 复用 oauth 模块的 fetch 逻辑以保持代理等环境变量一致
+ * - 头部包含 originator、Version 等 codex CLI 标识
+ */
+
 import {
   OPENAI_CODEX_ORIGINATOR,
   OPENAI_CODEX_USER_AGENT,

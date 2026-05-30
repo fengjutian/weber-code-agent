@@ -1,3 +1,24 @@
+/**
+ * @file error-log.ts
+ * @description 错误日志记录模块
+ *
+ * 职责：
+ * - 集中管理错误日志的写入
+ * - 提供堆栈跟踪信息捕获
+ * - 辅助调试和问题排查
+ *
+ * 日志存储：
+ * - 位置：~/.weber/errors/ 目录
+ * - 格式：JSON Lines（每行一个错误）
+ * - 文件名：基于时间戳生成
+ *
+ * 日志内容：
+ * - 错误消息
+ * - 时间戳
+ * - 堆栈跟踪（可选）
+ * - 附加上下文信息
+ */
+
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
