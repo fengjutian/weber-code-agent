@@ -1,0 +1,68 @@
+{
+  "name": "@lwmxiaobei/xbcode",
+  "version": "1.0.0",
+  "private": false,
+  "description": "xbcode CLI agent",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lwmxiaobei/agent-mini.git"
+  },
+  "homepage": "https://github.com/lwmxiaobei/agent-mini#readme",
+  "bugs": {
+    "url": "https://github.com/lwmxiaobei/agent-mini/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "cli",
+    "agent",
+    "ai",
+    "mcp"
+  ],
+  "bin": {
+    "xbcode": "./dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "scripts",
+    "skills",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "tsx src/index.tsx",
+    "build": "tsc -p tsconfig.json",
+    "test": "node --import tsx --test test/**/*.test.ts",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build && npm test",
+    "postinstall": "node scripts/postinstall.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.28.0",
+    "@types/react": "^19.2.14",
+    "dotenv": "^16.6.1",
+    "ink": "^6.8.0",
+    "ink-text-input": "^6.0.0",
+    "marked": "^15.0.12",
+    "marked-terminal": "^7.3.0",
+    "openai": "^5.19.1",
+    "proper-lockfile": "^4.1.2",
+    "react": "^19.2.4",
+    "undici": "^7.25.0",
+    "wrap-ansi": "^10.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "@types/proper-lockfile": "^4.1.4",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
