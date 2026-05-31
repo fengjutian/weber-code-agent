@@ -19,6 +19,12 @@ const defaultSettings = {
       baseURL: "https://api.openai.com/v1",
       apiMode: "responses",
     },
+    minimax: {
+      models: ["MiniMax-M2.7-highspeed", "MiniMax-M2.7", "MiniMax-M2.5-highspeed", "MiniMax-M2.5"],
+      apiKey: process.env.MINIMAX_API_KEY,
+      baseURL: "https://api.minimaxi.com/v1",
+      apiMode: "chat-completions",
+    },
   },
   defaultProvider: "openai",
   showThinking: false,

@@ -495,8 +495,8 @@ function normalizeModelProfile(
 
   return {
     models: normalizedModels,
-    apiKey: typeof value.apiKey === "string" ? value.apiKey : undefined,
-    baseURL: typeof value.baseURL === "string" ? value.baseURL : undefined,
+    apiKey: typeof value.apiKey === "string" && value.apiKey.trim() ? value.apiKey : undefined,
+    baseURL: typeof value.baseURL === "string" && value.baseURL.trim() ? value.baseURL : undefined,
     apiMode: value.apiMode === "responses" || value.apiMode === "chat-completions"
       ? value.apiMode
       : undefined,
