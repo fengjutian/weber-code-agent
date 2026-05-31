@@ -47,6 +47,7 @@ export function normalizeCommand(inputValue: string): string | null {
     case "new":
     case "resume":
     case "exit":
+    case "save":
       return withoutSlash;
     case "provider":
     case "model":

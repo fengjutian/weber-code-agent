@@ -227,6 +227,59 @@ function loadSessionFromFile(filePath: string): { createdAt: string; snapshot: S
  * - 这比模型自动命名更稳定，也不需要额外一次生成或保存专门标题字段。
  * - 工具、系统提示、thinking 内容都不是用户真正想恢复的主题，所以应跳过。
  */
+/**
+ * 将已持久化的 session 消息导出为 Markdown 文本。
+ *
+ * 为什么用 Markdown：
+ * - 用户可以直接在编辑器里查看，也可以复制粘贴到其他地方。
+ * - 保留代码块、标题等基本格式，比纯文本友善。
+ * - 每条消息标记角色（user / assistant / tool），区分清晰。
+ */
+export function exportSessionAsMarkdown(
+  messages: PersistedUiMessage[],
+  sessionId?: string,
+): string {
+  const lines: string[] = [];
+
+  lines.push(`# Session: ${sessionId ?? "(unnamed)"}`);
+  lines.push(`Exported at: ${new Date().toISOString()}`);
+  lines.push("");
+  lines.push("---");
+  lines.push("");
+
+  for (const msg of messages) {
+    const heading = roleHeading(msg.kind);
+    lines.push(heading);
+    lines.push("");
+
+    if (msg.title) {
+      lines.push(`> title: ${msg.title}`);
+    }
+    if (msg.subtitle) {
+      lines.push(`> subtitle: ${msg.subtitle}`);
+    }
+
+    lines.push("");
+    lines.push(msg.text.trim());
+    lines.push("");
+    lines.push("");
+  }
+
+  return lines.join("\n");
+}
+
+function roleHeading(kind: PersistedUiMessage["kind"]): string {
+  switch (kind) {
+    case "user":      return "## 👤 User";
+    case "assistant": return "## 🤖 Assistant";
+    case "system":    return "## ⚙️ System";
+    case "tool":      return "## 🔧 Tool";
+    case "thinking":  return "## 💭 Thinking";
+    case "error":     return "## ❌ Error";
+    default:           return "## ---";
+  }
+}
+
 function extractSessionTitle(messages: PersistedUiMessage[]): string {
   for (const message of messages) {
     if (message.kind !== "user") {

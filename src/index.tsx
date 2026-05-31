@@ -55,7 +55,7 @@ import {
   startOpenAILogin,
 } from "./oauth/openai.js";
 import { buildSystemPrompt } from "./prompt.js";
-import { appendSessionCheckpoint, createSessionId, listRecentSessions, loadSession, type SessionSnapshot } from "./session-store.js";
+import { appendSessionCheckpoint, createSessionId, listRecentSessions, loadSession, exportSessionAsMarkdown, type SessionSnapshot } from "./session-store.js";
 import { skillLoader, messageBus, taskManager, teammateManager } from "./tools.js";
 import { formatBusyStatus } from "./busy-status.js";
 import type { AgentState, DiffLine, ImageAttachment, PersistedUiMessage, ToolApprovalDecision, ToolArgs, TokenUsage, UiBridge, UiMessage } from "./types.js";
@@ -241,8 +241,9 @@ const SLASH_COMMANDS: SlashCommand[] = [
   { command: "/compact", description: "compact conversation history to free context space" },
   { command: "/new", description: "clear context and start a new conversation" },
   { command: "/resume", description: "list recent saved sessions or restore one by id" },
+  { command: "/save", description: "save conversation to a local markdown file" },
   { command: "/exit", description: "exit the CLI" },
-];
+  ];
 
 
 function getSkillSlashCommands(): SlashCommand[] {
@@ -732,7 +733,8 @@ function helpMessage(): string {
     "compact             compact conversation history to free context space",
     "new                 clear context and start a new conversation",
     "resume [sessionId]  list recent sessions or restore one",
-    "exit                exit the CLI",
+        "save                save conversation to a local markdown file",
+        "exit                exit the CLI",
     skillsLine,
     "",
     `config     ${getSettingsPath()}`,
@@ -1838,9 +1840,39 @@ function CliApp({ startupResume }: { startupResume: StartupResumeState }) {
       }
 
       if (command === "new") {
-        resetConversation();
-        return;
-      }
+              resetConversation();
+              return;
+            }
+
+            if (command.startsWith("save")) {
+              const fileArg = command.slice(4).trim();
+              const fileName = fileArg || `session-${agentStateRef.current.sessionId}.md`;
+              const filePath = path.resolve(WORKDIR, fileName);
+
+              const exported = exportSessionAsMarkdown(
+                serializeMessages(messagesRef.current),
+                agentStateRef.current.sessionId,
+              );
+
+              try {
+                fs.writeFileSync(filePath, exported, "utf8");
+                const msgCount = messagesRef.current.filter(
+                  (m) => m.kind === "user" || m.kind === "assistant"
+                ).length;
+                pushMessage(
+                  "system",
+                  `Conversation saved to ${filePath}\nMessages: ${msgCount}`,
+                  "save",
+                );
+              } catch (error) {
+                pushMessage(
+                  "error",
+                  `Failed to save: ${error instanceof Error ? error.message : String(error)}`,
+                  "save",
+                );
+              }
+              return;
+            }
 
       if (command.startsWith("resume")) {
         const sessionArg = command.slice(6).trim();
