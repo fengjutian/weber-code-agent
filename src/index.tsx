@@ -627,14 +627,14 @@ function WelcomePanel({ width, messages }: { width: number; messages: UiMessage[
   return (
     <Box
       borderStyle="round"
-      borderColor="red"
+      borderColor="green"
       flexDirection="column"
       marginBottom={1}
       paddingX={1}
       paddingY={0}
     >
       <Box justifyContent="space-between">
-        <Text bold color="red">weber</Text>
+        <Text bold color="green">weber</Text>
         <Text color="gray">v{pkg.version}</Text>
       </Box>
       <Box marginTop={1}>
@@ -642,9 +642,14 @@ function WelcomePanel({ width, messages }: { width: number; messages: UiMessage[
           <Text bold>Welcome back{currentResolved ? ` · ${currentResolved.providerName}` : ""}</Text>
           <Text color="gray">{ellipsize(WORKDIR, contentWidth)}</Text>
           <Text> </Text>
-          <Text color="red">   ▟██▙</Text>
-          <Text color="red">  ▟████▙</Text>
-          <Text color="red">   ▜██▛</Text>
+          <Text color="green">        ▲</Text>
+          <Text color="green">       ▲▲▲</Text>
+          <Text color="green">      ▲▲▲▲▲</Text>
+          <Text color="green">     ▲▲▲▲▲▲▲</Text>
+          <Text color="green">    ▲▲▲▲▲▲▲▲▲</Text>
+          <Text color="green">   ▲▲▲▲▲▲▲▲▲▲▲</Text>
+          <Text color="green">        █</Text>
+          <Text color="green">        █</Text>
           <Text> </Text>
           <Text color="gray">{currentResolved ? `${currentResolved.model} · ${currentResolved.apiMode}` : "No model selected"}</Text>
         </Box>
