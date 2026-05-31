@@ -2,181 +2,39 @@
 
 # weber
 
-`weber` is a TypeScript-based CLI coding agent built with OpenAI SDK and Ink. It runs in the terminal, streams model output, executes tools inside the current workspace, supports persistent tasks, skills, MCP integration, and lightweight multi-agent teamwork.
+A hackable CLI coding agent built with TypeScript, OpenAI SDK, and Ink. Works in your terminal, streams output, executes tools in your workspace, and supports tasks, skills, MCP integration, and multi-agent collaboration.
 
-The project is positioned as a compact, hackable alternative to heavier coding agents: small enough to read end-to-end, but already opinionated enough to be useful in day-to-day coding workflows.
+**Small enough to read end-to-end. Opinionated enough to be useful daily.**
 
-## Project Status
-
-`weber` is an early open source product focused on being practical, readable, and easy to extend. The current priority is reliability, usability, and contributor experience.
-
-Related project docs:
-
-- [Roadmap](./ROADMAP.md)
-- [Changelog](./CHANGELOG.md)
-- [Contributing](./CONTRIBUTING.md)
-- [Security Policy](./SECURITY.md)
-- [Code of Conduct](./CODE_OF_CONDUCT.md)
-
-## Features
-
-- Terminal-first interactive coding agent UI built with Ink and React
-- Dual API support: OpenAI Responses API and Chat Completions API
-- Workspace-scoped file and shell tools
-- Persistent task board stored on disk in `.tasks/`
-- Skills system with global and repo-local skill loading
-- MCP integration with dynamic MCP tool exposure plus prompt/resource access
-- Persistent teammates with inbox-based asynchronous coordination
-- Context compaction for long-running conversations
-- ESM TypeScript codebase with a small, readable architecture
+---
 
 ## Quick Start
 
 ### Install
 
 ```bash
-npm install -g @lwmxiaobei/weber
+npm install -g weber-code-agent
 ```
 
-Or run locally in this repo:
+Or run locally:
 
 ```bash
 npm install
 npm run dev
 ```
 
-### First-run configuration
+### Configure
 
-On install, `weber` creates a default config file at:
-
-```bash
-~/.weber/settings.json
-```
-
-Minimal example:
+Create `~/.weber/settings.json`:
 
 ```json
 {
   "providers": {
     "openai": {
-      "models": ["gpt-4.1", "gpt-4.1-mini", "o3-mini"],
+      "models": ["gpt-4.1"],
       "apiKey": "YOUR_OPENAI_API_KEY",
       "baseURL": "https://api.openai.com/v1",
       "apiMode": "responses"
-    }
-  },
-  "defaultProvider": "openai",
-  "showThinking": false,
-  "mcp": {
-    "servers": []
-  }
-}
-```
-
-### Start the CLI
-
-```bash
-weber
-```
-
-Local development:
-
-```bash
-npm run dev
-```
-
-Build and run compiled output:
-
-```bash
-npm run build
-npm start
-```
-
-### First prompt
-
-After launch, enter a request such as:
-
-```text
-Read the project structure and explain how the agent loop works.
-```
-
-If `MODEL_ID` is not preset in the environment, the CLI will guide you through interactive provider/model selection from `~/.weber/settings.json`.
-
-## How It Works
-
-At a high level, `weber` runs a standard think-act loop:
-
-1. Build a system prompt from built-in rules, loaded skill descriptions, MCP instructions, and optional project `AGENTS.md`.
-2. Send the current turn to the selected model.
-3. Stream assistant output into the Ink UI.
-4. Execute tool calls when the model asks for them.
-5. Feed tool results back to the model.
-6. Repeat until the model stops requesting tools.
-
-The current implementation supports two backend styles:
-
-- `responses`
-  Uses OpenAI Responses API and chains turns via `previous_response_id`
-- `chat-completions`
-  Uses local chat history and supports compatible endpoints such as DeepSeek-style APIs
-
-## User Guide
-
-### Commands
-
-Package scripts:
-
-```bash
-npm run dev
-npm run build
-npm run test
-npm start
-```
-
-Published binary:
-
-```bash
-weber
-```
-
-### Slash commands
-
-Built-in slash commands currently include:
-
-- `/help`
-- `/status`
-- `/login`
-- `/logout`
-- `/mcp`
-- `/mcp refresh`
-- `/team`
-- `/inbox`
-- `/provider`
-- `/model`
-- `/compact`
-- `/new`
-- `/exit`
-
-Skill prompt-commands are also exposed as slash commands when available from loaded skills.
-
-### Provider and model configuration
-
-Providers are configured in `~/.weber/settings.json`:
-
-```json
-{
-  "providers": {
-    "openai": {
-      "models": [
-        "gpt-4.1",
-        { "id": "gpt-4.1-mini", "name": "GPT-4.1 Mini", "description": "Fast general model" }
-      ],
-      "apiKey": "YOUR_KEY",
-      "baseURL": "https://api.openai.com/v1",
-      "apiMode": "responses",
-      "auth": {
-        "type": "oauth"
-      }
     }
   },
   "defaultProvider": "openai",
@@ -184,119 +42,93 @@ Providers are configured in `~/.weber/settings.json`:
 }
 ```
 
-Key fields:
-
-- `providers`
-  Named provider profiles
-- `models`
-  A list of model IDs or richer model descriptors
-- `defaultProvider`
-  Used when no provider is explicitly selected
-- `showThinking`
-  Enables display of model reasoning deltas when supported
-- `apiMode`
-  Either `responses` or `chat-completions`
-- `auth`
-  Optional provider auth mode. Today only `{ "type": "oauth" }` is supported, and only for OpenAI.
-
-API mode can be explicit, or derived automatically. For example, DeepSeek-compatible base URLs default to `chat-completions`.
-
-When OpenAI OAuth is enabled:
-
-- Static provider settings remain in `~/.weber/settings.json`
-- Dynamic OAuth credentials are stored separately in `~/.weber/credentials.json`
-- Runtime auth prefers a valid OAuth `access_token`
-- If refresh fails, `weber` falls back to the provider `apiKey` when one is configured
-
-OAuth commands:
+### Run
 
 ```bash
-/login openai
-/logout openai
+weber
 ```
 
-`/login` without an argument uses the current provider. In this first version, the CLI prints the OpenAI authorization URL in the terminal and waits for the localhost callback to complete.
-
-### Workspace behavior
-
-`weber` operates relative to the current working directory:
-
-- File tools are sandboxed to `process.cwd()`
-- Shell commands run with `cwd = process.cwd()`
-- Local skills are loaded from `<workdir>/skills`
-- Team state lives under `<workdir>/.team`
-- Tasks are stored under `<workdir>/.tasks`
-
-If the current project contains an `AGENTS.md`, its contents are injected into the system prompt and influence agent behavior.
-
-### Built-in tools
-
-The lead agent has access to:
-
-- `bash`
-- `read_file`
-- `write_file`
-- `edit_file`
-- `task_create`
-- `task_update`
-- `task_list`
-- `task_get`
-- `list_mcp_resources`
-- `read_mcp_resource`
-- `mcp_call`
-- `load_skill`
-- `task`
-- `message_send`
-- `teammate_spawn`
-- `teammate_list`
-- `teammate_shutdown`
-- `lead_inbox`
-
-Teammates get a reduced tool surface:
-
-- Base tools
-- `message_send`
-
-This is a deliberate constraint to prevent uncontrolled recursive delegation.
-
-### Tasks
-
-The task system is persistent and file-backed. Each task is stored as a JSON file under:
+Or locally:
 
 ```bash
-.tasks/task_<id>.json
+npm start
 ```
 
-Task fields include:
+---
 
-- `id`
-- `subject`
-- `description`
-- `status`
-- `blockedBy`
-- `blocks`
+## Features
 
-Supported statuses:
+| Feature | Description |
+|---------|-------------|
+| **Dual API** | OpenAI Responses API and Chat Completions API |
+| **File & Shell Tools** | Sandboxed to current workspace |
+| **Persistent Tasks** | File-backed task board in `.tasks/` |
+| **Skills System** | Global + repo-local skill loading |
+| **MCP Integration** | Dynamic tool exposure, prompts, and resources |
+| **Team Mode** | Persistent teammates with inbox-based messaging |
+| **Context Compaction** | Automatic history summarization |
+| **ESM TypeScript** | Small, readable codebase |
 
-- `pending`
-- `in_progress`
-- `completed`
+---
 
-When a task is marked `completed`, dependent tasks are automatically unblocked.
+## How It Works
 
-### Skills
+weber runs a standard think-act loop:
 
-Skills provide reusable instructions and domain-specific guidance. They are loaded from three locations:
+1. Build system prompt from skills, MCP instructions, and optional `AGENTS.md`
+2. Send turn to the model
+3. Stream output to the terminal UI
+4. Execute tool calls when requested
+5. Feed results back to the model
+6. Repeat until done
 
-- Global (preferred): `~/.weber/skills`
-- Global (Claude-compatible): `~/.claude/skills`
-- Local: `<workdir>/skills`
+**Responses API** — chains turns via `previous_response_id`, periodic chain reset to cap growth
 
-Loading order matters:
+**Chat Completions** — maintains local message history, compacts when token limits approach
+---
 
-- `~/.weber/skills` is loaded first
-- `~/.claude/skills` is loaded next for compatibility
-- Local skills are loaded last and override global skills with the same `name`
+## Commands
+
+### Slash Commands
+
+- `/help` — show help
+- `/status` — system status
+- `/login` `/logout` — OAuth login
+- `/mcp` — MCP server management
+- `/team` — team management
+- `/inbox` — view messages
+- `/provider` `/model` — switch provider/model
+- `/compact` — force compaction
+- `/new` — new conversation
+- `/exit` — exit
+
+### Built-in Tools
+
+**Lead agent:** `bash`, `read_file`, `write_file`, `edit_file`, `task_*`, `mcp_*`, `skill_*`, `message_send`, `teammate_*`
+
+**Teammates:** base tools + `message_send` only (intentionally limited)
+
+---
+
+## Tasks
+
+Persistent tasks stored in `.tasks/task_<id>.json`.
+
+Statuses: `pending` → `in_progress` → `completed`
+
+When a task completes, its blockers are automatically unblocked.
+
+---
+
+## Skills
+
+Loaded from three locations (in order):
+
+1. `~/.weber/skills` — global (loaded first)
+2. `~/.claude/skills` — global Claude-compatible
+3. `<workdir>/skills` — local (loaded last, overrides)
+
+Each skill is a `SKILL.md` with frontmatter. Example skills in `skills/pdf/` and `skills/code-review/`.
 
 Each skill is defined by a `SKILL.md` file with frontmatter. The loader exposes:
 
