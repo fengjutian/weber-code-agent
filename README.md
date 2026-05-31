@@ -13,7 +13,7 @@ A hackable CLI coding agent built with TypeScript, OpenAI SDK, and Ink. Works in
 ### Install
 
 ```bash
-npm install -g @lwmxiaobei/weber
+npm install -g weber
 ```
 
 Or run locally:
