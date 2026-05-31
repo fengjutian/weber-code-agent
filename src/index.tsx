@@ -1845,17 +1845,33 @@ function CliApp({ startupResume }: { startupResume: StartupResumeState }) {
             }
 
             if (command.startsWith("save")) {
-              const fileArg = command.slice(4).trim();
-              const fileName = fileArg || `session-${agentStateRef.current.sessionId}.md`;
-              const filePath = path.resolve(WORKDIR, fileName);
+                          const fileArg = command.slice(4).trim();
+                          const defaultName = `session-${agentStateRef.current.sessionId}.md`;
+                          const defaultDir = path.resolve(WORKDIR, "note");
+                          let filePath: string;
 
-              const exported = exportSessionAsMarkdown(
-                serializeMessages(messagesRef.current),
-                agentStateRef.current.sessionId,
-              );
+                          if (!fileArg) {
+                            // /save — 默认存到 ./note/ 目录
+                            filePath = path.join(defaultDir, defaultName);
+                          } else {
+                            const resolved = path.resolve(WORKDIR, fileArg);
+                            if (fs.existsSync(resolved) && fs.statSync(resolved).isDirectory()) {
+                              // 参数是已有目录 → 自动加默认文件名
+                              filePath = path.join(resolved, defaultName);
+                            } else {
+                              // 参数是文件路径（相对或绝对）
+                              filePath = resolved;
+                            }
+                          }
 
-              try {
-                fs.writeFileSync(filePath, exported, "utf8");
+                          const exported = exportSessionAsMarkdown(
+                            serializeMessages(messagesRef.current),
+                            agentStateRef.current.sessionId,
+                          );
+
+                          try {
+                            fs.mkdirSync(path.dirname(filePath), { recursive: true });
+                            fs.writeFileSync(filePath, exported, "utf8");
                 const msgCount = messagesRef.current.filter(
                   (m) => m.kind === "user" || m.kind === "assistant"
                 ).length;
